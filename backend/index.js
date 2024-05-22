@@ -2,9 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
+const studentRouter = require('./routes/student');
+
 const app = express();
 
 const corsOptions = { origin: "*" };
+app.use(express.json());
 app.use(cors(corsOptions));
 
 mongoose
@@ -15,6 +18,9 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
+  
+app.use(studentRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello to the api");
