@@ -1,10 +1,12 @@
 const zod = require('zod');
 const Warden = require("../models/Warden");
-const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 require("dotenv").config();
+const db = require('../index');
 
 async function signUp(req,res){
+    // console.log(await Warden.collection.indexes());
+    // await Warden.collection.dropIndex({"number":1});
     const body = req.body;
     const phoneRegex = new RegExp(/[0-9]+/);
     const wardenSchema = zod.object(
@@ -19,12 +21,12 @@ async function signUp(req,res){
 
     const loginDetails = {
         name : body.name,
-        usn : body.usn,
         password : body.password,
         email : body.email,
         phoneNumber : body.phoneNumber,
         hostel : body.hostel
     }
+    console.log(loginDetails);
 
     const success = wardenSchema.safeParse(loginDetails);
     if(!success){
@@ -37,10 +39,10 @@ async function signUp(req,res){
     var wardenId;
     try{
         const warden = await Warden.create(loginDetails);
+        console.log(warden);
         wardenId = warden._id;
     }catch(err){
-        console.log(err);
-        return res.json({error:"invaild inputs",details:err});
+        return res.json({error:"error while adding to database",details:err});
     }
 
     const token = jwt.sign({wardenId},process.env.JWT_SECRET);
@@ -49,4 +51,59 @@ async function signUp(req,res){
     });
 }
 
-module.exports = {signUp}
+async function signIn(req,res){
+    const body = req.body;
+    const loginSchema = zod.object(
+        {
+            email : zod.string().email(),
+            password : zod.string().min(8).max(20)
+        }
+    );
+
+    const loginDetails = {
+        email : body.email,
+        password : body.password
+    }
+    const success = loginSchema.safeParse(loginDetails);
+    if(!success){
+        return res.json(
+            {
+                error : "inputs out of bound"
+            }
+        )
+    }
+    var wardenId;
+    try{
+        const warden = await Warden.findOne({
+            email : loginDetails.email
+        });
+        if(!warden){
+            return res.json({
+                error : "user doesnt exist"
+            })
+        }
+        if(warden.password!=loginDetails.password){
+            return res.json(
+                {
+                    error : "invalid password"
+                }
+            )
+        }
+        wardenId = warden._id;
+    }catch(err){
+        return res.json(
+            {
+                error : "error while finding user"
+            }
+        )
+    }
+    const token = jwt.sign({wardenId},process.env.JWT_SECRET);
+    return res.json(
+        {
+            message : "user logged in",
+            token : "bearer "+token
+        }
+    );
+}
+
+module.exports = {signUp,signIn}

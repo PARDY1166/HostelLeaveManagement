@@ -19,10 +19,12 @@ mongoose
     console.log(err);
   });
 
-  
+const db = mongoose.connection;
 app.use(indexRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello to the api");
 });
 app.listen(3000, () => console.log(`app listening on port 3000...`));
+
+module.exports = db;
