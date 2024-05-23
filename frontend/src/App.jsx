@@ -1,6 +1,8 @@
 import './App.css'
 import { BrowserRouter,Routes,Route } from 'react-router-dom'
-import Dashboard from './pages/student/Dashboard'
+import Signin from './pages/parent/SignIn'
+import ParentDashboard from './pages/parent/ParentDashboard'
+import Signup from './pages/parent/SignUp'
 
 
 
@@ -9,7 +11,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/student/dashboard" element={<Dashboard/>}></Route>
+        <Route path="/parent/dashboard" element={<ParentDashboard/>}></Route>
+        <Route path="/parent/signin" element={<Signin/>}></Route>
+        <Route path="/parent/signup" element={<Signup/>}></Route>
       </Routes>
     </BrowserRouter>
   )
