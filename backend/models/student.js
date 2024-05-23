@@ -12,6 +12,6 @@ const studentSchema = new mongoose.Schema(
         parentId:{type:Number}
     }
 );
-const Student = mongoose.model("student",studentSchema);
+const Student = new mongoose.model("student",studentSchema);
 
 module.exports = Student;
