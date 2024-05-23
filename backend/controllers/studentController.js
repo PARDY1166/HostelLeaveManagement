@@ -1,9 +1,9 @@
 const zod = require('zod');
-// const validator = require('validator');
 const Student = require("../models/Student");
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('./middleware');
+const Parent = require('../models/Parent');
 require("dotenv").config();
 
 async function signUp(req,res){
@@ -140,4 +140,86 @@ async function studentDashboard(req,res){
     
 }
 
-module.exports = {signUp,signIn,studentDashboard};
+async function addParent(req,res){
+    const phoneRegex = new RegExp(/[0-9]+/);
+    const inputSchema = zod.object(
+        {
+        phoneNumber : zod.string().regex(phoneRegex).length(10)
+        }
+    );
+    const inputDetails = {
+        phoneNumber : req.body.phoneNumber
+    }
+
+    const success = inputSchema.safeParse(inputDetails);
+    if(!success){
+        return res.json(
+            {
+                error : "input details out of bound"
+            }
+        )
+    }
+    var parent;
+    try{
+        console.log(inputDetails);
+        parent = await Parent.findOne(
+            {
+                phoneNumber : inputDetails.phoneNumber
+            }
+        );
+        if(!parent){
+            return res.json(
+                {
+                    error : "no such parent found"
+                }
+            );
+        }
+    }catch(err){
+        return res.json(
+            {
+                error : "error occured while searching the parent",
+                details : err
+            }
+        )
+    }
+
+
+    try{
+        const student = await Student.findOne(
+            {
+                _id : req.studentId
+            }
+        )
+        if(student.parentId){
+            return res.json(
+                {
+                    error : "parent already present"
+                }
+            )
+        }
+        console.log(parent);
+        const updated = await Student.updateOne(
+            {
+                _id : req.studentId
+            },
+            {
+                parentId : parent._id
+            }
+        )
+        return res.json(
+            {
+                message : "parent added succesfully"
+            }
+        )
+    }catch(err){
+        return res.json(
+            {
+                error : "error while searhing for student or updating the user",
+                details : err
+            }
+        )
+    }
+
+}
+
+module.exports = {signUp,signIn,studentDashboard,addParent};
