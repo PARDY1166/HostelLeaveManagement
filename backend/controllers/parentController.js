@@ -15,59 +15,38 @@ async function signUp(req,res){
             name : zod.string().trim(),
             password : zod.string().min(8).max(20),
             phoneNumber : zod.string().regex(phoneRegex).length(10),
-            studentUsn : zod.string().length(10)
         }
     );
     const signUpDetails = {
         name : body.name,
         password : body.password,
         phoneNumber : body.phoneNumber,
-        studentUsn : body.usn
     }
 
     const success = parentSchema.safeParse(signUpDetails);
 
-    if(!success){
-        return res.json(
+    if(!success.success){
+        return res.status(400).json(
             {
-                error : "invalid inputs",
+                error : "inputs out of bound",
                 details : success.error
             }
         )
     }
-    try{
-        const student = await Student.findOne(
-            {
-                usn:signUpDetails.studentUsn
-            }
-        )
-        if(!student){
-            return res.json(
-                {
-                    error : "no such usn found"
-                }
-            )
-        }
-    }catch(err){
-        return res.json(
-            {
-                error : "error during search for usn"
-            }
-        )
-    }
+    
     var parentId;
     try{
         const parent = await Parent.create(signUpDetails);
         parentId = parent._id;
     }catch(err){
-        return res.json({
+        return res.status(500).json({
             error : "couldn't add to the database",
             details : err
         })
     }
 
     const token = jwt.sign({parentId},process.env.JWT_SECRET);
-    return res.json(
+    return res.status(200).json(
         {
             token : "Bearer "+token
         }
@@ -90,7 +69,7 @@ async function signIn(req,res){
     }
     const success = loginSchema.safeParse(loginDetails);
     if(!success){
-        return res.json(
+        return res.status(400).json(
             {
                 error : "inputs out of bound"
             }
@@ -102,12 +81,12 @@ async function signIn(req,res){
             phoneNumber : loginDetails.phoneNumber
         });
         if(!parent){
-            return res.json({
+            return res.status(404).json({
                 error : "user doesnt exist"
             })
         }
         if(parent.password!=loginDetails.password){
-            return res.json(
+            return res.status(401).json(
                 {
                     error : "invalid password"
                 }
@@ -115,14 +94,14 @@ async function signIn(req,res){
         }
         parentId = parent._id;
     }catch(err){
-        return res.json(
+        return res.status(500).json(
             {
                 error : "error while finding user"
             }
         )
     }
     const token = jwt.sign({parentId},process.env.JWT_SECRET);
-    return res.json(
+    return res.status(200).json(
         {
             message : "user logged in",
             token : "bearer "+token

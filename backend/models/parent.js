@@ -4,7 +4,6 @@ const parentSchema = new mongoose.Schema(
     {
     name : {type:String,minLength:3,required:true},
     phoneNumber : {type:Number,minLength:10,maxLength:10,unique:true},
-    studentUsn :{type:String,unique:true},
     password:{type:String,minLength:8,maxLength:20},
     }
 );
