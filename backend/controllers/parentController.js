@@ -40,7 +40,6 @@ async function signUp(req,res){
                 usn:signUpDetails.studentUsn
             }
         )
-        console.log(student);
         if(!student){
             return res.json(
                 {
@@ -74,4 +73,61 @@ async function signUp(req,res){
     )
 }
 
-module.exports = {signUp};
+
+async function signIn(req,res){
+    const body = req.body;
+    const loginSchema = zod.object(
+        {
+            phoneNumber : zod.string().min(10),
+            password : zod.string().min(8).max(20)
+        }
+    );
+
+    const loginDetails = {
+        phoneNumber : body.phoneNumber,
+        password : body.password
+    }
+    const success = loginSchema.safeParse(loginDetails);
+    if(!success){
+        return res.json(
+            {
+                error : "inputs out of bound"
+            }
+        )
+    }
+    var parentId;
+    try{
+        const parent = await Parent.findOne({
+            phoneNumber : loginDetails.phoneNumber
+        });
+        if(!parent){
+            return res.json({
+                error : "user doesnt exist"
+            })
+        }
+        if(parent.password!=loginDetails.password){
+            return res.json(
+                {
+                    error : "invalid password"
+                }
+            )
+        }
+        parentId = parent._id;
+    }catch(err){
+        return res.json(
+            {
+                error : "error while finding user"
+            }
+        )
+    }
+    const token = jwt.sign({parentId},process.env.JWT_SECRET);
+    return res.json(
+        {
+            message : "user logged in",
+            token : "bearer "+token
+        }
+    );
+}
+
+
+module.exports = {signUp,signIn};
