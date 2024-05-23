@@ -9,7 +9,7 @@ const studentSchema = new mongoose.Schema(
         usn : {type:String,minLength:10,maxLength:10,unique:true},
         password:{type:String,minLength:8,maxLength:20},
         hostel :{type:String},
-        parentId:{type:Number}
+        parentId:{type:String}
     }
 );
 const Student = new mongoose.model("student",studentSchema);
