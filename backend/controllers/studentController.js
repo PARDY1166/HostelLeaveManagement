@@ -1,9 +1,11 @@
 const zod = require('zod');
 const Student = require("../models/Student");
+const Leave = require("../models/Leave");
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('./middleware');
 const Parent = require('../models/Parent');
+const Warden = require('../models/Warden');
 require("dotenv").config();
 
 async function signUp(req,res){
@@ -33,7 +35,7 @@ async function signUp(req,res){
     const success = studentSchema.safeParse(loginDetails);
     if(!success){
         return res.json({
-            error : "invalid login details",
+            error : "login detail out of bound",
             details : success.error
         });
     }
@@ -42,14 +44,22 @@ async function signUp(req,res){
     try{
         const student = await Student.create(loginDetails);
         studentId = student._id;
+        const warden = await Warden.findOne(
+            {
+                hostel : student.hostel
+            }
+        );
+        console.log(warden);
+        const updated = await Student.updateOne({_id:student._id},{$set:{wardenId:warden._id}},{new:true});
+        console.log(updated)
     }catch(err){
         console.log(err);
-        return res.json({error:"invaild inputs",details:err});
+        return res.json({error:"Failed to add",details:err});
     }
 
     const token = jwt.sign({studentId},process.env.JWT_SECRET);
     return res.json({
-        token : "Bearer "+token
+        token : "bearer "+token
     });
     
 }
@@ -183,7 +193,6 @@ async function addParent(req,res){
         )
     }
 
-
     try{
         const student = await Student.findOne(
             {
@@ -197,7 +206,6 @@ async function addParent(req,res){
                 }
             )
         }
-        console.log(parent);
         const updated = await Student.updateOne(
             {
                 _id : req.studentId
@@ -221,5 +229,59 @@ async function addParent(req,res){
     }
 
 }
+async function leaveApplication(req,res){
+    const {dateOfApplication,dateOfReturn,isApproved,reason} = req.body;
 
-module.exports = {signUp,signIn,studentDashboard,addParent};
+    const studentId = req.studentId;
+    var currentStudent;
+
+    try{
+         currentStudent = await Student.findOne(
+            {
+                _id : studentId
+            }
+        )
+        if(!currentStudent){
+            return res.json({
+                error : "student not found"
+            });
+        }
+    }catch(err){
+        return res.json({
+            error : "error while searching for student"
+        });
+    }
+    console.log(currentStudent)
+    const leaveSchema = zod.object({
+        dateOfApplication : zod.string().date(),
+        dateOfReturn : zod.string().date(),
+        usn : zod.string().length(10),
+        parentId : zod.string(),
+        wardenId : zod.string(),
+        isApproved: zod.boolean(),
+        reason: zod.string().min(10).max(100),
+    });
+    const leaveDetails = {
+        dateOfApplication,
+        dateOfReturn,
+        usn : currentStudent.usn,
+        parentId : currentStudent.parentId,
+        wardenId:currentStudent.wardenId,
+        isApproved,
+        reason
+    }
+    console.log(leaveDetails.isApproved)
+    const success = leaveSchema.safeParse(leaveDetails);
+    if(!success) return res.json({
+        error : "leave details out of bound",
+        details : success.error
+    });
+    try {
+        const leave = await Leave.create(leaveDetails);
+        console.log(leave)
+        res.json({message:"Waiting for approval"});
+    } catch (error) {
+        res.json({error:"Failed to add",details:error})
+    }
+}
+module.exports = {signUp,signIn,studentDashboard,addParent,leaveApplication};
