@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
-const studentRouter = require('./routes/student');
+const indexRouter = require('./routes/index');
 
 const app = express();
 
@@ -20,7 +20,7 @@ mongoose
   });
 
   
-app.use(studentRouter);
+app.use(indexRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello to the api");

@@ -1,6 +1,5 @@
 const zod = require('zod');
-// const validator = require('validator');
-const Student = require("../models/Student");
+const Warden = require("../models/Warden");
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 require("dotenv").config();
@@ -8,17 +7,15 @@ require("dotenv").config();
 async function signUp(req,res){
     const body = req.body;
     const phoneRegex = new RegExp(/[0-9]+/);
-    const studentSchema = zod.object(
+    const wardenSchema = zod.object(
         {
             name : zod.string().trim(),
-            usn : zod.string().length(10),
             password : zod.string().min(8).max(20),
             email : zod.string().email(),
-            // phoneNumber : zod.string().refine(validator.isMobilePhone),
             phoneNumber : zod.string().regex(phoneRegex).length(10),
             hostel : zod.string()
         }
-    )
+    );
 
     const loginDetails = {
         name : body.name,
@@ -29,7 +26,7 @@ async function signUp(req,res){
         hostel : body.hostel
     }
 
-    const success = studentSchema.safeParse(loginDetails);
+    const success = wardenSchema.safeParse(loginDetails);
     if(!success){
         return res.json({
             error : "invalid login details",
@@ -37,20 +34,19 @@ async function signUp(req,res){
         });
     }
 
-    var studentId;
+    var wardenId;
     try{
-        const student = await Student.create(loginDetails);
-        studentId = student._id;
+        const warden = await Warden.create(loginDetails);
+        wardenId = warden._id;
     }catch(err){
         console.log(err);
         return res.json({error:"invaild inputs",details:err});
     }
 
-    const token = jwt.sign({studentId},process.env.JWT_SECRET);
+    const token = jwt.sign({wardenId},process.env.JWT_SECRET);
     return res.json({
         token : "Bearer "+token
     });
-    
 }
 
-module.exports = {signUp};
+module.exports = {signUp}
