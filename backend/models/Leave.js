@@ -7,7 +7,8 @@ const leaveSchema = new mongoose.Schema(
         usn : {type:String,required:true},
         parentId : {type:String,required:true},
         wardenId : {type:String,required:true},
-        reason :{type:String,required:true}
+        reason :{type:String,required:true},
+        isApproved:{type:Boolean,default:false,required:true}
     }
 );
 
