@@ -3,6 +3,7 @@ const Parent = require('../models/Parent');
 const Student = require('../models/Student');
 
 const jwt = require('jsonwebtoken');
+const Leave = require('../models/Leave');
 require('dotenv').config();
 
 async function signUp(req,res){
@@ -130,7 +131,6 @@ async function signIn(req,res){
 }
 
 async function parentDashboard(req,res){
-    // console.log(req);
     const parentId = req.parentId;
     if(!parentId){
         return res.json({
@@ -138,19 +138,17 @@ async function parentDashboard(req,res){
         })
     }
     try{
-        const parent = await Parent.findOne(
+        const leaveDetails = await Leave.findOne(
             {
-                _id : parentId
+                parentId
             }
         );
-        if(!parent){
+        if(!leaveDetails){
             return res.json({
-                error : "no student found"
+                error : "nothing to approve"
             });
         }
-        return res.json({
-            parent : parent.name
-        });
+        return res.json(leaveDetails);
     }catch(err){
         return res.json({
             error : "error while searching database"
