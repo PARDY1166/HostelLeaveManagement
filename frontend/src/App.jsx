@@ -3,7 +3,7 @@ import { BrowserRouter,Routes,Route } from 'react-router-dom'
 import Signin from './pages/parent/SignIn'
 import ParentDashboard from './pages/parent/ParentDashboard'
 import Signup from './pages/parent/SignUp'
-
+import "react-toastify/dist/ReactToastify.css";
 
 
 function App() {
