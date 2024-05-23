@@ -26,12 +26,11 @@ async function signUp(req,res){
         phoneNumber : body.phoneNumber,
         hostel : body.hostel
     }
-    console.log(loginDetails);
 
     const success = wardenSchema.safeParse(loginDetails);
-    if(!success){
-        return res.json({
-            error : "invalid login details",
+    if(!success.success){
+        return res.status(400).json({
+            error : "input details out of bound",
             details : success.error
         });
     }
@@ -42,12 +41,12 @@ async function signUp(req,res){
         console.log(warden);
         wardenId = warden._id;
     }catch(err){
-        return res.json({error:"error while adding to database",details:err});
+        return res.status(500).json({error:"error while adding to database",details:err});
     }
 
     const token = jwt.sign({wardenId},process.env.JWT_SECRET);
-    return res.json({
-        token : "Bearer "+token
+    return res.status(200).json({
+        token : "bearer "+token
     });
 }
 
@@ -65,8 +64,8 @@ async function signIn(req,res){
         password : body.password
     }
     const success = loginSchema.safeParse(loginDetails);
-    if(!success){
-        return res.json(
+    if(!success.success){
+        return res.status(400).json(
             {
                 error : "inputs out of bound"
             }
@@ -78,12 +77,12 @@ async function signIn(req,res){
             email : loginDetails.email
         });
         if(!warden){
-            return res.json({
-                error : "user doesnt exist"
+            return res.status(404).json({
+                error : "user doesn't exist"
             })
         }
         if(warden.password!=loginDetails.password){
-            return res.json(
+            return res.status(401).json(
                 {
                     error : "invalid password"
                 }
@@ -91,14 +90,14 @@ async function signIn(req,res){
         }
         wardenId = warden._id;
     }catch(err){
-        return res.json(
+        return res.status(500).json(
             {
                 error : "error while finding user"
             }
         )
     }
     const token = jwt.sign({wardenId},process.env.JWT_SECRET);
-    return res.json(
+    return res.status(200).json(
         {
             message : "user logged in",
             token : "bearer "+token
