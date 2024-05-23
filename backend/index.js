@@ -3,10 +3,13 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const indexRouter = require('./routes/index');
+const bodyParser = require("body-parser");
 
 const app = express();
 
 const corsOptions = { origin: "*" };
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors(corsOptions));
 
