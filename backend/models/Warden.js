@@ -2,9 +2,11 @@ const mongoose = require("mongoose");
 
 const WardenSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  number: { type: Number, required: true, unique: true, maxLength: 10, minLength: 10 },
+  phoneNumber: { type: String, required: true, unique: true, maxLength: 10, minLength: 10 },
   email: { type: String, required: true, unique: true, minLength: 13, maxLength: 50 },
   password: { type: String, required: true },
-  hostel: { type: String, required: true, maxLength: 10 },
+  hostel: { type: String, required: true, maxLength: 10,unique:true},
 });
-module.exports = new mongoose.model("warden", WardenSchema);
+
+const Warden =  new mongoose.model("warden", WardenSchema);
+module.exports = Warden;

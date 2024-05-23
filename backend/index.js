@@ -2,9 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
+const indexRouter = require('./routes/index');
+
 const app = express();
 
 const corsOptions = { origin: "*" };
+app.use(express.json());
 app.use(cors(corsOptions));
 
 mongoose
@@ -15,7 +18,13 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
+const db = mongoose.connection;
+app.use(indexRouter);
+
 app.get("/", (req, res) => {
   res.send("Hello to the api");
 });
 app.listen(3000, () => console.log(`app listening on port 3000...`));
+
+module.exports = db;

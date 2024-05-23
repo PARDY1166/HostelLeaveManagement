@@ -1,34 +1,36 @@
 const zod = require('zod');
-const Warden = require("../models/Warden");
+// const validator = require('validator');
+const Student = require("../models/Student");
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const authMiddleware = require('./middleware');
 require("dotenv").config();
-const db = require('../index');
 
 async function signUp(req,res){
-    // console.log(await Warden.collection.indexes());
-    // await Warden.collection.dropIndex({"number":1});
     const body = req.body;
     const phoneRegex = new RegExp(/[0-9]+/);
-    const wardenSchema = zod.object(
+    const studentSchema = zod.object(
         {
             name : zod.string().trim(),
+            usn : zod.string().length(10),
             password : zod.string().min(8).max(20),
             email : zod.string().email(),
+            // phoneNumber : zod.string().refine(validator.isMobilePhone),
             phoneNumber : zod.string().regex(phoneRegex).length(10),
             hostel : zod.string()
         }
-    );
+    )
 
     const loginDetails = {
         name : body.name,
+        usn : body.usn,
         password : body.password,
         email : body.email,
         phoneNumber : body.phoneNumber,
         hostel : body.hostel
     }
-    console.log(loginDetails);
 
-    const success = wardenSchema.safeParse(loginDetails);
+    const success = studentSchema.safeParse(loginDetails);
     if(!success){
         return res.json({
             error : "invalid login details",
@@ -36,32 +38,33 @@ async function signUp(req,res){
         });
     }
 
-    var wardenId;
+    var studentId;
     try{
-        const warden = await Warden.create(loginDetails);
-        console.log(warden);
-        wardenId = warden._id;
+        const student = await Student.create(loginDetails);
+        studentId = student._id;
     }catch(err){
-        return res.json({error:"error while adding to database",details:err});
+        console.log(err);
+        return res.json({error:"invaild inputs",details:err});
     }
 
-    const token = jwt.sign({wardenId},process.env.JWT_SECRET);
+    const token = jwt.sign({studentId},process.env.JWT_SECRET);
     return res.json({
         token : "Bearer "+token
     });
+    
 }
 
 async function signIn(req,res){
     const body = req.body;
     const loginSchema = zod.object(
         {
-            email : zod.string().email(),
+            usn : zod.string().length(10),
             password : zod.string().min(8).max(20)
         }
     );
 
     const loginDetails = {
-        email : body.email,
+        usn : body.usn,
         password : body.password
     }
     const success = loginSchema.safeParse(loginDetails);
@@ -72,24 +75,24 @@ async function signIn(req,res){
             }
         )
     }
-    var wardenId;
+    var studentId;
     try{
-        const warden = await Warden.findOne({
-            email : loginDetails.email
+        const student = await Student.findOne({
+            usn : loginDetails.usn
         });
-        if(!warden){
+        if(!student){
             return res.json({
                 error : "user doesnt exist"
             })
         }
-        if(warden.password!=loginDetails.password){
+        if(student.password!=loginDetails.password){
             return res.json(
                 {
                     error : "invalid password"
                 }
             )
         }
-        wardenId = warden._id;
+        studentId = student._id;
     }catch(err){
         return res.json(
             {
@@ -97,7 +100,7 @@ async function signIn(req,res){
             }
         )
     }
-    const token = jwt.sign({wardenId},process.env.JWT_SECRET);
+    const token = jwt.sign({studentId},process.env.JWT_SECRET);
     return res.json(
         {
             message : "user logged in",
@@ -106,27 +109,28 @@ async function signIn(req,res){
     );
 }
 
-async function wardenDashboard(req,res){
+async function studentDashboard(req,res){
     // console.log(req);
-    const wardenId = req.wardenId;
-    if(!wardenId){
+    const studentId = req.studentId;
+    if(!studentId){
         return res.json({
             error : "verification not done"
         })
     }
     try{
-        const warden = await Warden.findOne(
+        const student = await Student.findOne(
             {
-                _id : wardenId
+                _id : studentId
             }
         );
-        if(!warden){
+        console.log(student);
+        if(!student){
             return res.json({
                 error : "no student found"
             });
         }
         return res.json({
-            wardenName : warden.name
+            studentName : student.name
         });
     }catch(err){
         return res.json({
@@ -136,4 +140,4 @@ async function wardenDashboard(req,res){
     
 }
 
-module.exports = {signUp,signIn,wardenDashboard}
+module.exports = {signUp,signIn,studentDashboard};
