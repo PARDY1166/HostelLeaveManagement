@@ -106,4 +106,34 @@ async function signIn(req,res){
     );
 }
 
-module.exports = {signUp,signIn}
+async function wardenDashboard(req,res){
+    // console.log(req);
+    const wardenId = req.wardenId;
+    if(!wardenId){
+        return res.json({
+            error : "verification not done"
+        })
+    }
+    try{
+        const warden = await Warden.findOne(
+            {
+                _id : wardenId
+            }
+        );
+        if(!warden){
+            return res.json({
+                error : "no student found"
+            });
+        }
+        return res.json({
+            wardenName : warden.name
+        });
+    }catch(err){
+        return res.json({
+            error : "error while searching database"
+        })
+    }
+    
+}
+
+module.exports = {signUp,signIn,wardenDashboard}

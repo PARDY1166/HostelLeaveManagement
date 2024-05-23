@@ -129,5 +129,35 @@ async function signIn(req,res){
     );
 }
 
+async function parentDashboard(req,res){
+    // console.log(req);
+    const parentId = req.parentId;
+    if(!parentId){
+        return res.json({
+            error : "verification not done"
+        })
+    }
+    try{
+        const parent = await Parent.findOne(
+            {
+                _id : parentId
+            }
+        );
+        if(!parent){
+            return res.json({
+                error : "no student found"
+            });
+        }
+        return res.json({
+            parent : parent.name
+        });
+    }catch(err){
+        return res.json({
+            error : "error while searching database"
+        })
+    }
+    
+}
 
-module.exports = {signUp,signIn};
+
+module.exports = {signUp,signIn,parentDashboard};

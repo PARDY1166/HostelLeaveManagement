@@ -3,6 +3,7 @@ const zod = require('zod');
 const Student = require("../models/Student");
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const authMiddleware = require('./middleware');
 require("dotenv").config();
 
 async function signUp(req,res){
@@ -108,4 +109,35 @@ async function signIn(req,res){
     );
 }
 
-module.exports = {signUp,signIn};
+async function studentDashboard(req,res){
+    // console.log(req);
+    const studentId = req.studentId;
+    if(!studentId){
+        return res.json({
+            error : "verification not done"
+        })
+    }
+    try{
+        const student = await Student.findOne(
+            {
+                _id : studentId
+            }
+        );
+        console.log(student);
+        if(!student){
+            return res.json({
+                error : "no student found"
+            });
+        }
+        return res.json({
+            studentName : student.name
+        });
+    }catch(err){
+        return res.json({
+            error : "error while searching database"
+        })
+    }
+    
+}
+
+module.exports = {signUp,signIn,studentDashboard};
