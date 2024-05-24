@@ -1,5 +1,5 @@
 const express = require('express');
-const { signUp, signIn, parentDashboard } = require('../controllers/parentController');
+const { signUp, signIn, parentDashboard, approveLeave,rejectLeave } = require('../controllers/parentController');
 const authMiddleware = require('../controllers/middleware');
 
 const router = express.Router();
@@ -7,6 +7,8 @@ const router = express.Router();
 router.post('/signup',signUp);
 router.post('/signin',signIn)
 router.use(authMiddleware);
-router.get('/dashboard',parentDashboard);
+router.post('/dashboard',parentDashboard);
+router.post('/approveLeave',approveLeave);
+router.post('/rejectleave',rejectLeave);
 
 module.exports = router;

@@ -162,7 +162,7 @@ async function addParent(req,res){
     }
 
     const success = inputSchema.safeParse(inputDetails);
-    if(!success){
+    if(!success.success){
         return res.json(
             {
                 error : "input details out of bound"
@@ -230,7 +230,7 @@ async function addParent(req,res){
 
 }
 async function leaveApplication(req,res){
-    const {dateOfApplication,dateOfReturn,isApproved,reason} = req.body;
+    const {dateOfApplication,dateOfReturn,reason} = req.body;
 
     const studentId = req.studentId;
     var currentStudent;
@@ -259,6 +259,7 @@ async function leaveApplication(req,res){
         parentId : zod.string(),
         wardenId : zod.string(),
         isApproved: zod.boolean(),
+        isRejected: zod.boolean(),
         reason: zod.string().min(10).max(100),
     });
     const leaveDetails = {
@@ -267,7 +268,6 @@ async function leaveApplication(req,res){
         usn : currentStudent.usn,
         parentId : currentStudent.parentId,
         wardenId:currentStudent.wardenId,
-        isApproved,
         reason
     }
     console.log(leaveDetails.isApproved)

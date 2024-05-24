@@ -46,6 +46,7 @@ export default function Signin(){
                             const token = response.data.token;
                             localStorage.setItem("token",token);
                             navigate("/parent/dashboard");
+                            window.location.reload();
                         }catch(err){
                             toast.error(err.response.data.error, {
                                 position: "top-right",

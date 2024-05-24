@@ -68,7 +68,7 @@ async function signIn(req,res){
         password : body.password
     }
     const success = loginSchema.safeParse(loginDetails);
-    if(!success){
+    if(!success.success){
         return res.status(400).json(
             {
                 error : "inputs out of bound"
@@ -111,23 +111,33 @@ async function signIn(req,res){
 
 async function parentDashboard(req,res){
     const parentId = req.parentId;
+
+    
     if(!parentId){
         return res.json({
             error : "verification not done"
         })
     }
     try{
+        const parent = await Parent.findOne(
+            {
+                _id:parentId
+            }
+        );
         const leaveDetails = await Leave.findOne(
             {
-                parentId
+                parentId,
+                isApproved : false,
+                isRejected : false
             }
         );
         if(!leaveDetails){
             return res.json({
+                parent,
                 error : "nothing to approve"
             });
         }
-        return res.json(leaveDetails);
+        return res.json({leaveDetails,parent});
     }catch(err){
         return res.json({
             error : "error while searching database"
@@ -136,5 +146,77 @@ async function parentDashboard(req,res){
     
 }
 
+async function approveLeave(req, res) {
+    try {
+        const parentId = req.parentId;
+        console.log(parentId);
+        
+        const leaveDetails = await Leave.findOne({
+            parentId: parentId,
+            isApproved: false
+        });
 
-module.exports = {signUp,signIn,parentDashboard};
+
+        if (!leaveDetails) {
+            return res.status(404).json({
+                message: "Leave details not found or already approved"
+            });
+        }
+
+        const response = await Leave.updateOne(
+            { parentId: parentId, isApproved: false },
+            {
+                isApproved: true,
+            },
+        );
+
+        if (response.nModified === 0) {
+            return res.status(400).json({
+                message: "Failed to approve leave"
+            });
+        }
+
+        return res.json({
+            message: "Leave approved"
+        });
+    } catch (error) {
+        console.error("Error approving leave:", error);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+async function rejectLeave(req,res){
+    const parentId = req.parentId;
+    if(!parentId){
+        return res.json(404).json({
+            error:'verification not done'
+        })
+    }
+    try {
+        const leaveDetails = await Leave.findOne({
+            parentId,
+        });
+        if(!leaveDetails){
+            return res.status(404).json({
+                error:"there is nothing to reject"
+            });
+        }
+        await Leave.updateOne(
+            {
+                parentId
+            },
+            {
+                isRejected : true
+            }
+        );
+        res.status(200).json("Rejected successfully");
+    } catch (error) {
+        return res.status(500).json({
+            error: "error while rejecting database"
+        })
+    }
+}
+
+
+module.exports = {signUp,signIn,parentDashboard,approveLeave,rejectLeave};
