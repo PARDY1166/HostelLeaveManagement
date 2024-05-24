@@ -6,7 +6,7 @@ const authMiddleware = require("../controllers/middleware");
 router.post('/signup',signUp);
 router.post('/signin',signIn);
 router.use(authMiddleware)
-router.get('/dashboard',studentDashboard);
+router.post('/dashboard',studentDashboard);
 router.post("/leave",leaveApplication)
 router.post('/addparent',addParent);
 
