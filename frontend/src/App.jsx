@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Suspense, lazy, useEffect, useState } from "react";
 import axios from "axios";
 import WardenDashboard from "./pages/warden/WardenDashboard";
+import LandingPage from "./pages/LandingPage";
 const WardenSignup = lazy(() => import("./pages/warden/WardenSignUp"));
 const WardenSignIn = lazy(() => import("./pages/warden/WardenSignIn"));
 const ParentSignIn = lazy(() => import("./pages/parent/ParentSignIn"));
@@ -47,6 +48,7 @@ function App() {
     <BrowserRouter>
       <Suspense fallback={<h1>Loading...</h1>}>
         <Routes>
+          <Route path="/" element={<LandingPage/>}></Route>
           {isVerified && isParent && (
             <Route path="/parent/dashboard" element={<ParentDashboard />} />
           )}
@@ -54,16 +56,13 @@ function App() {
           <Route path="/parent/signup" element={<ParentSignUp />} />
           <Route path="/warden/signup" element={<WardenSignup />} />
           <Route path="/warden/signin" element={<WardenSignIn />} />
+          <Route path="/student/signin" element={<StudentSignIn />} />
+          <Route path="/student/signup" element={<StudentSignUp />} />
           {isVerified && isWarden && (
             <Route path="/warden/dashboard" element={<WardenDashboard />} />
           )}
           <Route path="*" element={<PageNotFound />} />
-          {!isVerified && (
-            <>
-              <Route path="/student/signin" element={<StudentSignIn />} />
-              <Route path="/student/signup" element={<StudentSignUp />} />
-            </>
-          )}
+          
           {isVerified && isStudent && (
             <>
               <Route path="/student/dashboard" element={<StudentDashboard />} />
