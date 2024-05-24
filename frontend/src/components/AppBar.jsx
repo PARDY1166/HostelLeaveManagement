@@ -30,7 +30,7 @@ export default function Appbar({ user }) {
       ref={appbarRef}
       className="flex justify-between items-center p-5 shadow relative bg-white"
     >
-      <button className="font-bold text-xl">BMSET Hostels</button>
+      <button className="font-bold text-xl" onClick={()=>{navigate('/student/dashboard')}}>BMSET Hostels</button>
       <div className="flex items-center relative">
         <div className="mr-10 font-medium">
           Hello, <span className="text-blue-500">{user}</span>

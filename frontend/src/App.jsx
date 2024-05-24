@@ -5,6 +5,8 @@ import { Suspense, lazy, useEffect, useState } from "react";
 import axios from "axios";
 import WardenDashboard from "./pages/warden/WardenDashboard";
 import LandingPage from "./pages/LandingPage";
+import CheckStatus from "./pages/student/CheckStatus";
+import History from "./pages/student/History";
 const WardenSignup = lazy(() => import("./pages/warden/WardenSignUp"));
 const WardenSignIn = lazy(() => import("./pages/warden/WardenSignIn"));
 const ParentSignIn = lazy(() => import("./pages/parent/ParentSignIn"));
@@ -67,6 +69,8 @@ function App() {
             <>
               <Route path="/student/dashboard" element={<StudentDashboard />} />
               <Route path="/student/leave" element={<LeaveApplication />} />
+              <Route path="/student/status" element={<CheckStatus />} />
+              <Route path="/student/history" element={<History />} />
             </>
           )}
         </Routes>
