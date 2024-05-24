@@ -13,7 +13,6 @@ export default function StudentDashboard() {
           {},
           { headers: { Authorization: token } }
         );
-        console.log(res.data.student);
         setStudent(res.data.student);
       } catch (error) {
         console.log(error);
@@ -23,13 +22,13 @@ export default function StudentDashboard() {
   return (
     <div className="pb-20">
       { student ? <Appbar user={student.name}/> : <h1>Loading...</h1>}
-      <div class="flex justify-center pt-10">
-                <div class="w-[60%] grid grid-cols-2 gap-6">
+      <div className="flex justify-center pt-10">
+                <div className="w-[60%] grid grid-cols-2 gap-6">
                     {/* <div className='flex justify-center'><Calendar style={{ height: '100%', width: '100%'}}></Calendar></div> */}
-                    <HomePageButton name={"Calender"} ></HomePageButton>
-                    <HomePageButton name={"Apply for leave"} ></HomePageButton>
-                    <HomePageButton name={"Check Status"} ></HomePageButton>
-                    <HomePageButton name={"History"} ></HomePageButton>
+                    <HomePageButton name={"Calender"} linkTo="/student/calendar"></HomePageButton>
+                    <HomePageButton name={"Apply for leave"} linkTo={"/student/leave"}></HomePageButton>
+                    <HomePageButton name={"Check Status"} linkTo={"/student/status"}></HomePageButton>
+                    <HomePageButton name={"History"} linkTo={"/student/history"}></HomePageButton>
                 </div>
             </div>
     </div>
