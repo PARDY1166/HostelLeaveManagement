@@ -8,17 +8,18 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
 export default function LeaveApplication() {
-  const [dateOfLeave, setDateOfLeave] = useState("");
-  const [dateOfReturn, setDateOfReturn] = useState("");
+  const [dateOfLeave, setDateOfLeave] = useState();
+  const [dateOfReturn, setDateOfReturn] = useState(new Date());
   const [reason, setReason] = useState("");
   const token = localStorage.getItem("token");
   const handleSubmit = async () => {
     try {
+      console.log(typeof(dateOfLeave));
       const response = await axios.post(
         "http://localhost:3000/student/leave",
         {
-          dateOfApplication: dateOfLeave,
-          dateOfReturn,
+          dateOfApplication:dateOfLeave,
+          dateOfReturn:dateOfReturn,
           reason,
         },
         {
@@ -28,6 +29,16 @@ export default function LeaveApplication() {
         }
       );
       console.log(response.data);
+      toast.success(response.data.message, {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     } catch (err) {
       toast.error(err.response.data.error, {
         position: "top-right",
@@ -58,7 +69,7 @@ export default function LeaveApplication() {
         />
         <Heading label={"Leave Application"}></Heading>
         <SubHeading
-          label={"Enter your credentials to access your account"}
+          label={"send the details to apply for leave"}
         ></SubHeading>
         <InputBox
           label={"Date of Leave"}
@@ -81,11 +92,6 @@ export default function LeaveApplication() {
           }}
         ></InputBox>
         <Button label={"Apply Leave"} onClick={handleSubmit}></Button>
-        <BottomWarning
-          label={"Dont an account?"}
-          underline={"Sign Up"}
-          toLink={"./signup"}
-        ></BottomWarning>
       </div>
     </div>
   );
