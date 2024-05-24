@@ -4,26 +4,30 @@ import BottomWarning from "../../components/BottomWarning";
 import InputBox from "../../components/InputBox";
 import Button from "../../components/Button";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
-export default function StudentSignIn() {
-  const [usn, setUsn] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+export default function LeaveApplication() {
+  const [dateOfLeave, setDateOfLeave] = useState("");
+  const [dateOfReturn, setDateOfReturn] = useState("");
+  const [reason, setReason] = useState("");
+  const token = localStorage.getItem("token");
   const handleSubmit = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/student/signin",
+        "http://localhost:3000/student/leave",
         {
-          usn,
-          password,
+          dateOfApplication: dateOfLeave,
+          dateOfReturn,
+          reason,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
         }
       );
-      const token = response.data.token;
-      localStorage.setItem("token", token);
-      navigate("/student/dashboard");
+      console.log(response.data);
     } catch (err) {
       toast.error(err.response.data.error, {
         position: "top-right",
@@ -52,23 +56,31 @@ export default function StudentSignIn() {
           pauseOnHover
           theme="dark"
         />
-        <Heading label={"Sign In"}></Heading>
+        <Heading label={"Leave Application"}></Heading>
         <SubHeading
           label={"Enter your credentials to access your account"}
         ></SubHeading>
         <InputBox
-          label={"USN"}
+          label={"Date of Leave"}
+          type="date"
           onChange={(e) => {
-            setUsn(e.target.value);
+            setDateOfLeave(e.target.value);
           }}
         ></InputBox>
         <InputBox
-          label={"Password"}
+          label={"Date of Return"}
+          type={"date"}
           onChange={(e) => {
-            setPassword(e.target.value);
+            setDateOfReturn(e.target.value);
           }}
         ></InputBox>
-        <Button label={"SignIn"} onClick={handleSubmit}></Button>
+        <InputBox
+          label={"Reason"}
+          onChange={(e) => {
+            setReason(e.target.value);
+          }}
+        ></InputBox>
+        <Button label={"Apply Leave"} onClick={handleSubmit}></Button>
         <BottomWarning
           label={"Dont an account?"}
           underline={"Sign Up"}
