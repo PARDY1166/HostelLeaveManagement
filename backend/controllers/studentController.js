@@ -239,24 +239,30 @@ async function leaveApplication(req,res){
             }
         )
         if(!currentStudent){
-            return res.json({
+            return res.status(404).json({
                 error : "student not found"
             });
         }
+        const check = await Leave.findOne({
+            usn: currentStudent.usn,
+            isApproved:false
+        })
+        if(check){
+            return res.status(409).json({
+                error:"You have already applied for leave"
+            })
+        }
     }catch(err){
-        return res.json({
+        return res.status(500).json({
             error : "error while searching for student"
         });
     }
-    console.log(currentStudent)
     const leaveSchema = zod.object({
         dateOfApplication : zod.string().date(),
         dateOfReturn : zod.string().date(),
         usn : zod.string().length(10),
         parentId : zod.string(),
         wardenId : zod.string(),
-        isApproved: zod.boolean(),
-        isRejected: zod.boolean(),
         reason: zod.string().min(10).max(100),
     });
     const leaveDetails = {
@@ -267,18 +273,16 @@ async function leaveApplication(req,res){
         wardenId:currentStudent.wardenId,
         reason
     }
-    console.log(leaveDetails.isApproved)
     const success = leaveSchema.safeParse(leaveDetails);
-    if(!success) return res.json({
+    if(!success.success) return res.status(400).json({
         error : "leave details out of bound",
         details : success.error
     });
     try {
         const leave = await Leave.create(leaveDetails);
-        console.log(leave)
-        res.json({message:"Waiting for approval"});
+        res.status(200).json({message:"Waiting for approval"});
     } catch (error) {
-        res.json({error:"Failed to add",details:error})
+        res.status(500).json({error:"Failed to add",details:error})
     }
 }
 module.exports = {signUp,signIn,studentDashboard,addParent,leaveApplication};

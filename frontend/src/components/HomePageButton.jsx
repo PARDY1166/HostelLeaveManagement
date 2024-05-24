@@ -4,7 +4,7 @@ export default function HomePageButton({name,linkTo}) {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate("/"+linkTo);
+        navigate(linkTo);
     };
 
     return (
