@@ -9,8 +9,9 @@ const ParentSignIn = lazy(()=>import("./pages/parent/ParentSignIn"))
 const ParentSignUp = lazy(()=>import("./pages/parent/ParentSignUp"))
 const ParentDashboard = lazy(()=>import("./pages/parent/ParentDashboard"))
 const PageNotFound = lazy(()=>(import("./pages/PageNotFound")))
-
-
+const StudentSignIn = lazy(()=>import("./pages/student/StudentSignIn"));
+const StudentSignUp = lazy(()=>import("./pages/student/StudentSignUp"));
+const StudentDashboard = lazy(()=>import("./pages/student/StudentDashboard"));
 
 function App() {
 
@@ -57,6 +58,9 @@ function App() {
         <Route path="/warden/signin" element={<WardenSignIn/>}></Route>
         {isVerified && isWarden && <Route path="/warden/dashboard" element={<WardenDashboard/>}></Route>}
         <Route path="*" element = {<PageNotFound/>}></Route>
+        <Route path="/student/signin" element={<StudentSignIn/>}></Route>
+        <Route path="/student/signup" element={<StudentSignUp/>}></Route>
+        <Route path="/student/dashboard" element={<StudentDashboard/>}></Route>
       </Routes>
     </BrowserRouter>
   )

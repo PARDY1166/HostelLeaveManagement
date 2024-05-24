@@ -33,8 +33,8 @@ async function signUp(req,res){
     }
 
     const success = studentSchema.safeParse(loginDetails);
-    if(!success){
-        return res.json({
+    if(!success.success){
+        return res.status(400).json({
             error : "login detail out of bound",
             details : success.error
         });
@@ -54,11 +54,11 @@ async function signUp(req,res){
         console.log(updated)
     }catch(err){
         console.log(err);
-        return res.json({error:"Failed to add",details:err});
+        return res.status(500).json({error:"Failed to add",details:err});
     }
 
     const token = jwt.sign({studentId},process.env.JWT_SECRET);
-    return res.json({
+    return res.status(200).json({
         token : "bearer "+token
     });
     
@@ -79,7 +79,7 @@ async function signIn(req,res){
     }
     const success = loginSchema.safeParse(loginDetails);
     if(!success){
-        return res.json(
+        return res.status(400).json(
             {
                 error : "inputs out of bound"
             }
@@ -91,12 +91,12 @@ async function signIn(req,res){
             usn : loginDetails.usn
         });
         if(!student){
-            return res.json({
+            return res.status(404).json({
                 error : "user doesnt exist"
             })
         }
         if(student.password!=loginDetails.password){
-            return res.json(
+            return res.status(401).json(
                 {
                     error : "invalid password"
                 }
@@ -104,14 +104,14 @@ async function signIn(req,res){
         }
         studentId = student._id;
     }catch(err){
-        return res.json(
+        return res.status(500).json(
             {
                 error : "error while finding user"
             }
         )
     }
     const token = jwt.sign({studentId},process.env.JWT_SECRET);
-    return res.json(
+    return res.status(200).json(
         {
             message : "user logged in",
             token : "bearer "+token
@@ -133,17 +133,14 @@ async function studentDashboard(req,res){
                 _id : studentId
             }
         );
-        console.log(student);
         if(!student){
-            return res.json({
+            return res.status(404).json({
                 error : "no student found"
             });
         }
-        return res.json({
-            studentName : student.name
-        });
+        return res.json({ student });
     }catch(err){
-        return res.json({
+        return res.status(500).json({
             error : "error while searching database"
         })
     }

@@ -1,10 +1,4 @@
-import { useNavigate } from "react-router-dom"
-
 export default function Appbar({user}){
-    const navigate = useNavigate();
-    const link = (address)=>{
-        navigate("/"+address);
-    }
     return(
         <div className="flex justify-between items-center p-5 shadow">
             <button className="font-bold text-xl" >Bmseth Hostels</button>
