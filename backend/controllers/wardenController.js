@@ -1,5 +1,6 @@
 const zod = require('zod');
 const Warden = require("../models/Warden");
+const Leave = require("../models/Leave");
 const jwt = require('jsonwebtoken');
 require("dotenv").config();
 const db = require('../index');
@@ -106,29 +107,39 @@ async function signIn(req,res){
 }
 
 async function wardenDashboard(req,res){
-    // console.log(req);
     const wardenId = req.wardenId;
+
+    
     if(!wardenId){
-        return res.json({
+        return res.status(400).json({
             error : "verification not done"
         })
     }
     try{
+        console.log("gi");
         const warden = await Warden.findOne(
             {
-                _id : wardenId
+                _id:wardenId
             }
         );
-        if(!warden){
+        console.log(warden);
+        const leaveDetails = await Leave.find(
+            {
+                wardenId,
+                isApproved : true,
+                isRejected : false
+            }
+        );
+        console.log(leaveDetails);
+        if(!leaveDetails){
             return res.json({
-                error : "no student found"
+                warden,
+                error : "nothing to approve"
             });
         }
-        return res.json({
-            wardenName : warden.name
-        });
+        return res.status(200).json({leaveDetails,warden});
     }catch(err){
-        return res.json({
+        return res.status(500).json({
             error : "error while searching database"
         })
     }

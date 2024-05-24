@@ -8,7 +8,7 @@ const {getType} = require('../controllers/generalController');
 router.use('/student',studentRouter);
 router.use('/parent',parentRouter);
 router.use('/warden',wardenRouter);
-router.get('/general',getType)
+router.post('/general',getType)
 
 
 module.exports = router;
