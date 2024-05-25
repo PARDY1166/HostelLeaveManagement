@@ -45,7 +45,17 @@ export default function Signin(){
                         console.log(response.data);
                             const token = response.data.token;
                             localStorage.setItem("token",token);
-                            navigate("/parent/dashboard");
+                            setTimeout(
+                                ()=>{
+                                  localStorage.removeItem("token");
+                                },360000
+                              )
+                              setTimeout(
+                                ()=>{
+                                    navigate("/parent/dashboard");
+                                },1000
+                              )
+                            
                             window.location.reload();
                         }catch(err){
                             toast.error(err.response.data.error, {

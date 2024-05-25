@@ -46,7 +46,7 @@ export default function AddParent() {
       );
       toast.success(response.data.message, {
         position: "top-right",
-        autoClose: 1500,
+        autoClose: 4500,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -61,7 +61,7 @@ export default function AddParent() {
       console.log(err.response.data.error);
       toast.error(err.response.data.error, {
         position: "top-right",
-        autoClose: 1500,
+        autoClose: 4500,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,

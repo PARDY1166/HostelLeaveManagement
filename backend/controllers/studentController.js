@@ -160,7 +160,7 @@ async function addParent(req,res){
 
     const success = inputSchema.safeParse(inputDetails);
     if(!success.success){
-        return res.json(
+        return res.status(400).json(
             {
                 error : "input details out of bound"
             }
@@ -175,14 +175,14 @@ async function addParent(req,res){
             }
         );
         if(!parent){
-            return res.json(
+            return res.status(404).json(
                 {
                     error : "no such parent found"
                 }
             );
         }
     }catch(err){
-        return res.json(
+        return res.status(500).json(
             {
                 error : "error occured while searching the parent",
                 details : err
@@ -197,9 +197,21 @@ async function addParent(req,res){
             }
         )
         if(student.parentId){
-            return res.json(
+            return res.status(401).json(
                 {
                     error : "parent already present"
+                }
+            )
+        }
+        const newStudent = await Student.findOne(
+            {
+                parentId : parent._id
+            }
+        );
+        if(newStudent){
+            return res.status(400).json(
+                {
+                    error : "This parent has been assigned to another student"
                 }
             )
         }
@@ -211,13 +223,15 @@ async function addParent(req,res){
                 parentId : parent._id
             }
         )
-        return res.json(
+        return res.status(200).json(
             {
+                student,
+                updated,
                 message : "parent added succesfully"
             }
         )
     }catch(err){
-        return res.json(
+        return res.ststus(500).json(
             {
                 error : "error while searhing for student or updating the user",
                 details : err
@@ -230,11 +244,22 @@ async function leaveApplication(req,res){
 
     const {dateOfApplication,dateOfReturn,reason} = req.body;
 
+    const formattedDateOfApplication = new Date(dateOfApplication);
+    const formattedDateOfReturn = new Date(dateOfReturn);
+
+    if(formattedDateOfApplication<new Date()){
+        return res.status(400).json(
+            {
+                error : "application date can not be of the past"
+            }
+        )
+    }
+    
     const studentId = req.studentId;
     var currentStudent;
 
     try{
-         currentStudent = await Student.findOne(
+        currentStudent = await Student.findOne(
             {
                 _id : studentId
             }
@@ -251,20 +276,51 @@ async function leaveApplication(req,res){
                 }
             )
         }
-        const check = await Leave.findOne({
-            usn: currentStudent.usn,
-            isApproved:false
-        })
-        if(check){
-            return res.status(409).json({
-                error:"You have already applied for leave"
-            })
+        const data = await Leave.findOne(
+            {
+                usn : currentStudent.usn
+            }
+        );
+        if(data){
+            if(data.dateOfReturn<=new Date()){
+                Leave.updateOne(data,
+                    {
+                        completed : true
+                    }
+                );
+            }
+    
+            const newData = await Leave.findOne(
+                {
+                    completed:false,
+                    usn : currentStudent.usn
+                }
+            )
+            console.log(newData);
+            if(newData){
+                return res.status(400).json(
+                    {
+                        error : "cant't apply for more than one leave"
+                    }
+                )
+            }
         }
     }catch(err){
-        return res.status(500).json({
-            error : "error while searching for student"
-        });
+        return res.status(500).json(
+            {
+                error : "error while searching new db"
+            }
+        )
     }
+    if(formattedDateOfReturn<formattedDateOfApplication){
+        return res.status(400).json(
+            {
+                error : "return date can't be before application date"
+            }
+        );
+    }
+
+
     const leaveSchema = zod.object({
         dateOfApplication : zod.string().date(),
         dateOfReturn : zod.string().date(),

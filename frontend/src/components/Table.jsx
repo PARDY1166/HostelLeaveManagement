@@ -1,4 +1,7 @@
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import { useEffect } from "react";
+
 
 export default function Table({ leaveData,setLeaveData }) {
 
@@ -9,7 +12,21 @@ export default function Table({ leaveData,setLeaveData }) {
                     authorization: localStorage.getItem("token")
                 }
             });
-            setLeaveData(null);
+            toast.success("Leave approved successfully.", {
+                position: "top-right",
+                autoClose: 4500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+              });
+              setTimeout(
+                ()=>{
+                    setLeaveData(null);
+                },2500
+              )
             console.log("Leave approved successfully.");
         } catch (error) {
             console.error("Error approving leave:", error);
@@ -22,9 +39,32 @@ export default function Table({ leaveData,setLeaveData }) {
                     authorization: localStorage.getItem("token")
                 }
             });
-            setLeaveData(null);
-            console.log("Leave rejected successfully.");
+            toast.success("Leave rejected successfully.", {
+                position: "top-right",
+                autoClose: 4500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+              });
+              setTimeout(
+                ()=>{
+                    setLeaveData(null);
+                },2500
+              )
         } catch (error) {
+            toast.error(error, {
+                position: "top-right",
+                autoClose: 4500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+              });
             console.error("Error approving leave:", error);
         }
     }
@@ -32,6 +72,18 @@ export default function Table({ leaveData,setLeaveData }) {
     return (
         <div className="mt-20 flex justify-center">
             <div className="flex flex-col flex-1 border border-slate-400 rounded-lg p-5 max-w-4xl">
+            <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
                 <div className="flex flex-col mb-5">
                     <div className="grid grid-cols-3 gap-3 font-semibold">
                         <div className="col-span-1">Date of Leave</div>
@@ -45,8 +97,8 @@ export default function Table({ leaveData,setLeaveData }) {
                     </div>
                 </div>
                 <div className="flex justify-center gap-4">
-                    <button className="border border-slate-400 rounded-lg w-32 p-2 hover:bg-slate-200" onClick={handleApprove}>Approve</button>
-                    <button className="border border-slate-400 rounded-lg w-32 p-2 hover:bg-slate-200" onClick={handleReject}>Reject</button>
+                    <button className="border text-green-400 border-slate-400 rounded-lg w-32 p-2 hover:bg-slate-200" onClick={handleApprove}>Approve</button>
+                    <button className="border text-red-500 border-slate-400 rounded-lg w-32 p-2 hover:bg-slate-200" onClick={handleReject}>Reject</button>
                 </div>
             </div>
         </div>

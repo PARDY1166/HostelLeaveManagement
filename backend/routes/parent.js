@@ -8,7 +8,7 @@ router.post('/signup',signUp);
 router.post('/signin',signIn)
 router.use(authMiddleware);
 router.post('/dashboard',parentDashboard);
-router.post('/approveLeave',approveLeave);
+router.post('/approveleave',approveLeave);
 router.post('/rejectleave',rejectLeave);
 
 module.exports = router;

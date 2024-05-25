@@ -26,7 +26,17 @@ export default function Signup() {
       });
       console.log(res.data.token);
       localStorage.setItem("token",res.data.token);
-      navigate("/warden/dashboard");
+      setTimeout(
+        ()=>{
+          localStorage.removeItem("token");
+        },360000
+      )
+      setTimeout(
+        ()=>{
+          navigate("/warden/dashboard");
+        },1000
+      )
+      
     } catch (error) {
       toast.error(error.response.data.error, {
         position: "top-right",

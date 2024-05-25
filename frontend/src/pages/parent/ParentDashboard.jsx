@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Appbar from "../../components/AppBar";
 import Table from "../../components/Table";
 import axios from "axios";
+import {toast,ToastContainer} from 'react-toastify'
 
 export default function () {
     
@@ -26,7 +27,6 @@ export default function () {
                 console.log(err);
             }
         }
-        console.log(parentData);
     getData();
   }, []);
 
@@ -34,7 +34,8 @@ export default function () {
     <div>
       {parentData? <Appbar user={parentData.name}></Appbar> : <Appbar user={"user"}></Appbar>}
       {
-        leaveData ? <Table leaveData={leaveData} setLeaveData={setLeaveData}/> : <h1 className="flex items-center justify-center mt-20 font-bold text-xl">Nothing to approve or reject</h1>
+        leaveData ? <Table leaveData={leaveData} setLeaveData={setLeaveData}/> : 
+        <h1 className="flex items-center justify-center mt-20 font-bold text-xl">Nothing to approve or reject</h1>
       }
     </div>
   );
