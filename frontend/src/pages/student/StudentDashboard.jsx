@@ -25,7 +25,7 @@ export default function StudentDashboard() {
       <div className="flex justify-center pt-10">
                 <div className="w-[60%] grid grid-cols-2 gap-6">
                     {/* <div className='flex justify-center'><Calendar style={{ height: '100%', width: '100%'}}></Calendar></div> */}
-                    <HomePageButton name={"Calender"} linkTo="/student/calendar"></HomePageButton>
+                    <HomePageButton name={"Add Parent"} linkTo="/student/addparent"></HomePageButton>
                     <HomePageButton name={"Apply for leave"} linkTo={"/student/leave"}></HomePageButton>
                     <HomePageButton name={"Check Status"} linkTo={"/student/status"}></HomePageButton>
                     <HomePageButton name={"History"} linkTo={"/student/history"}></HomePageButton>

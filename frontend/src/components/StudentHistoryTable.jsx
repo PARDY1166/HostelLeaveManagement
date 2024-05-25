@@ -11,7 +11,7 @@ export default function Table({ leaveData, setLeaveData }) {
                 <div className="col-span-1">Date of Leave</div>
                 <div className="col-span-1">Reason</div>
                 <div className="col-span-1">Date of Return</div>
-                <div className="col-span-1">Usn</div>
+                <div className="col-span-1">Approved</div>
               </div>
               <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-1">
@@ -21,9 +21,10 @@ export default function Table({ leaveData, setLeaveData }) {
                 <div className="col-span-1">
                   {new Date(leave.dateOfReturn).toLocaleString()}
                 </div>
-                <div className="col-span-1">
-                  {leave.usn}
-                </div>
+                <div className="col-span-1">{
+                            (leave.isApproved == false && leave.isRejected == false)?"in Process":(leave.isApproved == true)?"Approved":"Rejected"
+                        }</div>
+
               </div>
             </div>
           );

@@ -30,7 +30,7 @@ export default function Appbar({ user }) {
       ref={appbarRef}
       className="flex justify-between items-center p-5 shadow relative bg-white"
     >
-      <button className="font-bold text-xl">BMSET Hostels</button>
+      <button className="font-bold text-xl" onClick={()=>{navigate('/student/dashboard')}}>BMSET Hostels</button>
       <div className="flex items-center relative">
         <div className="mr-10 font-medium">
           Hello, <span className="text-blue-500">{user}</span>
@@ -43,16 +43,16 @@ export default function Appbar({ user }) {
         </button>
         <div>
           {isInvoked && (
-            <div className="bg-slate-200 absolute right-0 top-8 mt-2 w-48 py-2 rounded-lg shadow-lg flex flex-col items-center">
+            <div className="bg-slate-50 absolute right-0 top-8 mt-2 w-48 py-2 rounded-lg shadow-lg flex flex-col items-center">
               <button
                 onClick={() => navigate("/student/profile")}
-                className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-b-lg"
+                className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 opacity-80 duration-75"
               >
                 Profile
               </button>
               <button
                 onClick={handleLogout}
-                className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-t-lg"
+                className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 opacity-80 duration-50"
               >
                 Logout
               </button>

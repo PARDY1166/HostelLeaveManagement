@@ -23,7 +23,7 @@ export default function Table({ leaveData,setLeaveData }) {
                 }
             });
             setLeaveData(null);
-            console.log("Leave approved successfully.");
+            console.log("Leave rejected successfully.");
         } catch (error) {
             console.error("Error approving leave:", error);
         }
@@ -40,7 +40,7 @@ export default function Table({ leaveData,setLeaveData }) {
                     </div>
                     <div className="grid grid-cols-3 gap-3">
                         <div className="col-span-1">{new Date(leaveData.dateOfApplication).toLocaleString()}</div>
-                        <div className="col-span-1">{leaveData.reason}</div>
+                        <div className="col-span-1 break-words whitespace-normal">{leaveData.reason}</div>
                         <div className="col-span-1">{new Date(leaveData.dateOfReturn).toLocaleString()}</div>
                     </div>
                 </div>

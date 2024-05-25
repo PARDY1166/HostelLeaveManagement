@@ -34,7 +34,7 @@ export default function () {
     <div>
       {parentData? <Appbar user={parentData.name}></Appbar> : <Appbar user={"user"}></Appbar>}
       {
-        leaveData ? <Table leaveData={leaveData} setLeaveData={setLeaveData}/> : <h1 className="flex items-center justify-center">Nothing to approve or reject</h1>
+        leaveData ? <Table leaveData={leaveData} setLeaveData={setLeaveData}/> : <h1 className="flex items-center justify-center mt-20 font-bold text-xl">Nothing to approve or reject</h1>
       }
     </div>
   );

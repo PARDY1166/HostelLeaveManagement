@@ -227,6 +227,7 @@ async function addParent(req,res){
 
 }
 async function leaveApplication(req,res){
+
     const {dateOfApplication,dateOfReturn,reason} = req.body;
 
     const studentId = req.studentId;
@@ -242,6 +243,13 @@ async function leaveApplication(req,res){
             return res.status(404).json({
                 error : "student not found"
             });
+        }
+        if(!currentStudent.parentId){
+            return res.status(401).json(
+                {
+                    error : "parent not added"
+                }
+            )
         }
         const check = await Leave.findOne({
             usn: currentStudent.usn,
@@ -280,9 +288,100 @@ async function leaveApplication(req,res){
     });
     try {
         const leave = await Leave.create(leaveDetails);
-        res.status(200).json({message:"Waiting for approval"});
+        console.log(typeof(leave.dateOfApplication));
+        res.status(200).json({message:"request sent successfully"});
     } catch (error) {
         res.status(500).json({error:"Failed to add",details:error})
     }
 }
-module.exports = {signUp,signIn,studentDashboard,addParent,leaveApplication};
+
+async function checkStatus(req,res){
+    const studentId = req.studentId;
+    const currentDate = new Date();
+    currentDate.setHours(0,0,0,0);
+    const tenDaysLater = new Date(currentDate);
+    tenDaysLater.setDate(currentDate.getDate()+10);
+
+    console.log(currentDate);
+    console.log(tenDaysLater);
+
+    
+
+    try{
+        const student = await Student.findOne({
+            _id:studentId
+        });
+        console.log(student);
+        const leave = await Leave.findOne(
+            {
+                usn:student.usn,
+                dateOfApplication : {
+                    $gte : currentDate,
+                    $lt : tenDaysLater
+                }
+            }
+        );
+        if(!leave){
+            return res.json(
+                {
+                    error : "couldnt find any such leave"
+                }
+            )
+        }
+        console.log(leave);
+        return res.status(200).json({leave,student});
+    }catch(err){
+        return res.status(500).json(
+            {
+                error : "error while searching for leave"
+            }
+        )
+    }
+}
+
+async function history(req,res){
+    const studentId = req.studentId;
+
+    try{
+        const student = await Student.findOne(
+            {
+                _id : studentId
+            }
+        );
+        console.log(student);
+        if(!student){
+            return res.status(404).json(
+                {
+                    error : "no student found"
+                }
+            );
+        }
+        const leave = await Leave.find(
+            {
+                usn : student.usn
+            }
+        );
+        console.log(leave);
+        if(!leave){
+            return res.status(404).json(
+                {
+                    message : "no leaves taken yet"
+                }
+            )
+        }
+
+        return res.status(200).json(
+            {
+                leave,
+                student
+            }
+        )
+    }catch(err){
+        return res.status(500).json(
+            {
+                error : "error while searching db"
+            }
+        )
+    }
+}
+module.exports = {signUp,signIn,studentDashboard,addParent,leaveApplication,checkStatus,history};
