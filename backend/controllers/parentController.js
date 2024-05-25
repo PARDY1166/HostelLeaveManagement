@@ -48,6 +48,7 @@ async function signUp(req,res){
     const token = jwt.sign({parentId},process.env.JWT_SECRET);
     return res.status(200).json(
         {
+            message : "signed up successfully",
             token : "Bearer "+token
         }
     )

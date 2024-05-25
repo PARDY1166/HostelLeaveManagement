@@ -9,7 +9,8 @@ const leaveSchema = new mongoose.Schema(
         wardenId : {type:String,required:true},
         reason :{type:String,required:true},
         isApproved:{type:Boolean,default:false,required:true},
-        isRejected:{type:Boolean,default:false,required:true}
+        isRejected:{type:Boolean,default:false,required:true},
+        completed:{type:Boolean,default:false}
     }
 );
 

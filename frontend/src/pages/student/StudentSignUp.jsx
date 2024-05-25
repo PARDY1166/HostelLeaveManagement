@@ -26,9 +26,28 @@ export default function StudentSignup() {
         password,
         hostel,
       });
-      console.log(res.data.token);
-      localStorage.setItem("token",res.data.token);
-      navigate("/student/dashboard");
+      localStorage.setItem("token",res.data.token); 
+      setTimeout(
+        ()=>{
+          localStorage.removeItem("token");
+        },360000
+      )
+      toast.success("Signup success!\ntaking you to the dashboard", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      setTimeout(
+        ()=>{
+          navigate("/student/dashboard");
+        },2000
+      )
+      
     } catch (error) {
       toast.error(error.response.data.error, {
         position: "top-right",

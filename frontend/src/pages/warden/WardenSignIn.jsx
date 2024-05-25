@@ -19,7 +19,17 @@ export default function Signin() {
         password,
       });
       localStorage.setItem("token", res.data.token);
-      navigate("/warden/dashboard");
+      setTimeout(
+        ()=>{
+          localStorage.removeItem("token");
+        },360000
+      )
+      setTimeout(
+        ()=>{
+          navigate("/warden/dashboard");
+        },1000
+      )
+      
     } catch (error) {
       console.log(error);
       console.log(error.response.data.error);

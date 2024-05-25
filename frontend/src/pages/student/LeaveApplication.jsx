@@ -1,6 +1,5 @@
 import Heading from "../../components/Heading";
 import SubHeading from "../../components/SubHeading";
-import BottomWarning from "../../components/BottomWarning";
 import InputBox from "../../components/InputBox";
 import Button from "../../components/Button";
 import axios from "axios";
@@ -31,7 +30,7 @@ export default function LeaveApplication() {
       console.log(response.data);
       toast.success(response.data.message, {
         position: "top-right",
-        autoClose: 1500,
+        autoClose: 4500,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -42,7 +41,7 @@ export default function LeaveApplication() {
     } catch (err) {
       toast.error(err.response.data.error, {
         position: "top-right",
-        autoClose: 1500,
+        autoClose: 4500,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,

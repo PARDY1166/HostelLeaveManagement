@@ -96,7 +96,13 @@ function App() {
               </>
             )
           }
-          <Route path="*" element={<PageNotFound />} />
+          {
+            setTimeout(
+              ()=>{
+                <Route path="*" element={<PageNotFound />} />
+              },1000
+            )
+          } 
         </Routes>
       </Suspense>
     </BrowserRouter>

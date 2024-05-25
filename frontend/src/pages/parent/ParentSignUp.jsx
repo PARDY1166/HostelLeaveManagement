@@ -47,6 +47,16 @@ export default function Signup(){
                             );
                             console.log(response);
                             localStorage.setItem("token",response.data.token);
+                            setTimeout(
+                                ()=>{
+                                  localStorage.removeItem("token");
+                                },360000
+                              )
+                              setTimeout(
+                                ()=>{
+                                    navigate('/parent/dashboard');
+                                },1000
+                              )
                             navigate('/parent/dashboard');
                         }catch(err){
                             toast.error(err.response.data.error, {

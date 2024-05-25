@@ -23,6 +23,22 @@ export default function StudentSignIn() {
       );
       const token = response.data.token;
       localStorage.setItem("token", token);
+      setTimeout(
+        ()=>{
+          localStorage.removeItem("token");
+          console.log("token expired");
+        },360000
+      )
+      toast.success(response.data.message, {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
       navigate("/student/dashboard");
     } catch (err) {
       toast.error(err.response.data.error, {
@@ -33,7 +49,7 @@ export default function StudentSignIn() {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "dark",
+        theme: "light",
       });
     }
   };
