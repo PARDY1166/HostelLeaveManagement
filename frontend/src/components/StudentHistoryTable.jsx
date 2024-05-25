@@ -22,7 +22,7 @@ export default function Table({ leaveData, setLeaveData }) {
                   {new Date(leave.dateOfReturn).toLocaleString()}
                 </div>
                 <div className="col-span-1">{
-                            (leaveData.isApproved == false && leaveData.isRejected == false)?"in Process":(leaveData.isApproved == true)?"Approved":"Rejected"
+                            (leave.isApproved == false && leave.isRejected == false)?"in Process":(leave.isApproved == true)?"Approved":"Rejected"
                         }</div>
 
               </div>

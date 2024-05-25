@@ -7,6 +7,7 @@ import WardenDashboard from "./pages/warden/WardenDashboard";
 import LandingPage from "./pages/LandingPage";
 import CheckStatus from "./pages/student/CheckStatus";
 import History from "./pages/student/History";
+import AddParent from "./pages/student/AddParent";
 const WardenSignup = lazy(() => import("./pages/warden/WardenSignUp"));
 const WardenSignIn = lazy(() => import("./pages/warden/WardenSignIn"));
 const ParentSignIn = lazy(() => import("./pages/parent/ParentSignIn"));
@@ -23,7 +24,6 @@ function App() {
   const [isParent, setIsParent] = useState(false);
   const [isWarden, setIsWarden] = useState(false);
   const [isStudent, setIsStudent] = useState(false);
-  // const [token,setToken] = localStorage.getItem("token");
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -63,16 +63,40 @@ function App() {
           {isVerified && isWarden && (
             <Route path="/warden/dashboard" element={<WardenDashboard />} />
           )}
-          <Route path="*" element={<PageNotFound />} />
-          
           {isVerified && isStudent && (
             <>
               <Route path="/student/dashboard" element={<StudentDashboard />} />
               <Route path="/student/leave" element={<LeaveApplication />} />
               <Route path="/student/status" element={<CheckStatus />} />
               <Route path="/student/history" element={<History />} />
+              <Route path="/student/addparent" element={<AddParent />} />
             </>
           )}
+          {
+            isVerified && isStudent &&(
+              <>
+              <Route path="/parent/dashboard" element={<ParentSignIn />} />
+              <Route path="/warden/dashboard" element={<WardenSignIn />} />
+              </>
+            )
+          }
+          {
+            isVerified && isParent &&(
+              <>
+              <Route path="/student/dashboard" element={<StudentSignIn />} />
+              <Route path="/warden/dashboard" element={<WardenSignIn />} />
+              </>
+            )
+          }
+          {
+            isVerified && isWarden &&(
+              <>
+              <Route path="/student/dashboard" element={<StudentSignIn />} />
+              <Route path="/parent/dashboard" element={<ParentSignIn />} />
+              </>
+            )
+          }
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

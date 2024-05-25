@@ -23,7 +23,7 @@ export default function Table({ leaveData,setLeaveData }) {
                 }
             });
             setLeaveData(null);
-            console.log("Leave approved successfully.");
+            console.log("Leave rejected successfully.");
         } catch (error) {
             console.error("Error approving leave:", error);
         }

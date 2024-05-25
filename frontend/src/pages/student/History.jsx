@@ -20,6 +20,8 @@ export default function History(){
                 console.log(response);
                 setStudent(response.data.student.name);
                 setLeave(response.data.leave);
+                
+    console.log(leave);
             }
             try{
                 getData();
@@ -29,11 +31,10 @@ export default function History(){
             
         },[]
     )
-
     return(
         <div>
             {student?<AppBar user={student}></AppBar>:<AppBar user={"User"}></AppBar>}
-            {leave?<StudentHistoryTable leaveData={leave} setLeaveData={leave}></StudentHistoryTable>:<>loading...</>}
+            {leave?(leave.length>0?<StudentHistoryTable leaveData={leave} setLeaveData={leave}></StudentHistoryTable>:<div className="flex justify-center pt-20 text-xl font-bold">No Leaves Taken Yet</div>):<div>Loading...</div>}
         </div>
     )
 }

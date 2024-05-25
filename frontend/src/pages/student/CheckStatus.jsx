@@ -30,7 +30,7 @@ export default function CheckStatus(){
     return(
         <div>
             {student?<AppBar user={student}></AppBar>:<AppBar user={"user"}></AppBar>}
-            {leaveData?<StudentTable leaveData={leaveData} setLeaveData={setLeaveData}></StudentTable>:<>loading...</>}
+            {leaveData?<StudentTable leaveData={leaveData} setLeaveData={setLeaveData}></StudentTable>:<div className="flex justify-center pt-20 text-xl font-bold">No Leaves Taken Yet</div>}
         </div>
     )
 }
