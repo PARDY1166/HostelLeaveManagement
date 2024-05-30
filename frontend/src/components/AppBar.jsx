@@ -45,7 +45,7 @@ export default function Appbar({ user }) {
           {isInvoked && (
             <div className="bg-slate-50 absolute right-0 top-8 mt-2 w-48 py-2 rounded-lg shadow-lg flex flex-col items-center">
               <button
-                onClick={() => navigate("/student/profile")}
+                onClick={() => navigate("/profile")}
                 className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 opacity-80 duration-75"
               >
                 Profile

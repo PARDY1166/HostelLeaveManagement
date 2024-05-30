@@ -12,6 +12,7 @@ import { ToastContainer, toast } from 'react-toastify';
 export default function Signin(){
     const [phoneNumber,setPhoneNumber] = useState("");
     const [password,setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     return(
@@ -32,31 +33,39 @@ export default function Signin(){
                 <Heading label={"Sign In"}></Heading>
                 <SubHeading label={"Enter your credentials to access your account"}></SubHeading>
                 <InputBox  label={"PhoneNumber"} onChange={(e)=>{setPhoneNumber(e.target.value)}}></InputBox>
-                <InputBox label={"Password"} onChange={(e)=>{setPassword(e.target.value)}}></InputBox>
+                <InputBox type="password" label={"Password"} onChange={(e)=>{setPassword(e.target.value)}}></InputBox>
                 <Button label={"SignIn"} onClick={
                     async()=>{
                         try{
+                            setLoading(true)
                             const response = await axios.post('http://localhost:3000/parent/signin',
                             {
                                 phoneNumber,
                                 password
                             }
                         );
-                        console.log(response.data);
-                            const token = response.data.token;
-                            localStorage.setItem("token",token);
-                            setTimeout(
-                                ()=>{
-                                  localStorage.removeItem("token");
-                                },360000
-                              )
-                              setTimeout(
-                                ()=>{
-                                    navigate("/parent/dashboard");
-                                },1000
-                              )
-                            
-                            window.location.reload();
+                        const token = response.data.token;
+                        localStorage.setItem("token", token);
+                        setTimeout(() => {
+                            localStorage.removeItem("token");
+                            console.log("token expired");
+                        }, 360000);
+
+                        toast.success(response.data.message, {
+                            position: "top-right",
+                            autoClose: 1500,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "dark",
+                        });
+
+                        setTimeout(() => {
+                            setLoading(false);
+                            window.location.href="/parent/dashboard";
+                        }, 1500);
                         }catch(err){
                             toast.error(err.response.data.error, {
                                 position: "top-right",

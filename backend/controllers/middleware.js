@@ -4,7 +4,7 @@ require('dotenv').config();
 
 function authMiddleware(req,res,next){
     const authHeader = req.headers.authorization;
-    if(!authHeader.startsWith("bearer")){
+    if(!authHeader?.startsWith("bearer")){
         return res.json(
             {
                 error : "invalid token"
