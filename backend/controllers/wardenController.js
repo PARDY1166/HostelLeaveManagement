@@ -145,5 +145,63 @@ async function wardenDashboard(req,res){
     }
     
 }
+async function profile(req,res){
+    const wardenId = req.wardenId;
 
-module.exports = {signUp,signIn,wardenDashboard}
+    
+    if(!wardenId){
+        return res.status(400).json({
+            error : "verification not done"
+        })
+    }
+    try{
+        const warden = await Warden.findOne(
+            {
+                _id:wardenId
+            }
+        );
+        return res.status(200).json({warden});
+    }catch(err){
+        return res.status(500).json({
+            error : "error while searching database"
+        })
+    }
+    
+}
+async function profileUpdate(req, res) {
+    const wardenId = req.wardenId;
+    const { name, email, hostel } = req.body;
+  
+    if (!wardenId) {
+      return res.status(400).json({
+        error: "Verification not done"
+      });
+    }
+  
+    try {
+      const warden = await Warden.findOne({ _id: wardenId });
+      if (!warden) {
+        return res.status(404).json({
+          error: "Warden not found"
+        });
+      }
+  
+      if (name) warden.name = name;
+      if (email) warden.email = email;
+      if (hostel) warden.hostel = hostel;
+  
+      await warden.save();
+  
+      return res.status(200).json({
+        message: "Profile updated successfully",
+        warden
+      });
+    } catch (err) {
+      console.error("Error while updating profile: ", err);
+      return res.status(500).json({
+        error: "Error while updating profile"
+      });
+    }
+  }
+
+module.exports = {signUp,signIn,wardenDashboard,profile, profileUpdate}

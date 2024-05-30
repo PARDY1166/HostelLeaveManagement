@@ -218,6 +218,78 @@ async function rejectLeave(req,res){
         })
     }
 }
+async function profile(req,res){
+    const parentId = req.parentId;
+    if(!parentId){
+        return res.json(404).json({
+            error:'verification not done'
+        })
+    }
+    try {
+        const parent = await Parent.findOne(
+            {
+                _id:parentId
+            }
+        );
+        const student = await Student.findOne(
+            {
+                parentId : parentId
+            }
+        );
+        if(!student){
+            return res.status(404).json(
+                {
+                    error : "No Student Found"
+                }
+            );
+        }
+        return res.status(200).json(
+            {
+                parent,
+                student
+            }
+        )
+    } catch (error) {
+        return res.status(500).json({
+            error: "error while rejecting database"
+        })
+    }
+}
 
+async function profileUpdate(req, res) {
+    const parentId = req.parentId;
+    const { name, contact, studentName } = req.body;
+  
+    if (!parentId) {
+      return res.status(400).json({
+        error: "Verification not done"
+      });
+    }
+  
+    try {
+      const parent = await Parent.findOne({ _id: parentId });
+      if (!parent) {
+        return res.status(404).json({
+          error: "Parent not found"
+        });
+      }
+  
+      if (name) parent.name = name;
+      if (contact) parent.contact = contact;
+      if (studentName) parent.studentName = studentName;
+  
+      await parent.save();
+  
+      return res.status(200).json({
+        message: "Profile updated successfully",
+        parent
+      });
+    } catch (err) {
+      console.error("Error while updating profile: ", err);
+      return res.status(500).json({
+        error: "Error while updating profile"
+      });
+    }
+  }
 
-module.exports = {signUp,signIn,parentDashboard,approveLeave,rejectLeave};
+module.exports = {signUp,signIn,parentDashboard,approveLeave,rejectLeave,profile,profileUpdate};
