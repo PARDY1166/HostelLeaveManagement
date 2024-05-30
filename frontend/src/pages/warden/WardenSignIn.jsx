@@ -26,7 +26,7 @@ export default function Signin() {
       )
       setTimeout(
         ()=>{
-          navigate("/warden/dashboard");
+          window.location.href="/warden/dashboard";
         },1000
       )
       
